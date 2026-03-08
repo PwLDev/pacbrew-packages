@@ -1,6 +1,9 @@
 FROM archlinux:latest
 
-RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld openssl-1.1 go
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld go
+RUN wget https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
+  && pacman -U --noconfirm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
+  && rm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst
 
 # PacBew Official Packages
 RUN echo "[pacbrew]" >> /etc/pacman.conf \
