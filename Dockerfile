@@ -25,4 +25,5 @@ RUN git clone https://github.com/OpenOrbis/create-gp4.git && cd create-gp4/cmd/c
 # Environment Variables
 ENV PACBREW=/opt/pacbrew
 ENV OO_PS4_TOOLCHAIN=/opt/openorbis
+ENV OPENORBIS=/opt/openorbis
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
