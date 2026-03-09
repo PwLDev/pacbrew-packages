@@ -1,5 +1,11 @@
 # Fixed PacBrew Packages
 
+## Docker
+
+Attempting to get a functioning Pacbrew enviornment is such a pain, please just
+use the `Dockerfile` provided in this repo with the `gradylink/pacbrew:latest`
+image on Docker Hub.
+
 ## Installation
 
 The easiest way to install these fixed packages is by downloading them from the
