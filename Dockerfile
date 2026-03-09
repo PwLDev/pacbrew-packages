@@ -33,3 +33,6 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 # Patch PacBrew pkg-config to use PacBrew portlibs instead of normal OpenOrbis
 RUN sed -i 's|PKG_CONFIG_LIBDIR=${OPENORBIS}/usr/lib/pkgconfig|PKG_CONFIG_LIBDIR=${PACBREW}/ps4/openorbis/usr/lib/pkgconfig|' /opt/pacbrew/ps4/openorbis/usr/bin/openorbis-pkg-config
+
+# Missing vorbisfile requirement for sdl2_mixer's pkg-config
+RUN sed -i '/^Requires.private:/ s/$/ vorbisfile/' /opt/pacbrew/ps4/openorbis/usr/lib/pkgconfig/SDL2_mixer.pc
