@@ -1,6 +1,6 @@
 FROM archlinux:latest
 
-RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld go
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld go cmake
 RUN wget https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
   && pacman -U --noconfirm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
   && rm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst
