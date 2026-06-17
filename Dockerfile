@@ -1,6 +1,9 @@
 FROM archlinux:latest
 
-RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm git wget base-devel unzip tar clang lld go cmake llvm
+RUN wget https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
+  && pacman -U --noconfirm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst \
+  && rm openssl-1.1-1.1.1.w-2-x86_64.pkg.tar.zst
 
 # PacBew Official Packages
 RUN echo "[pacbrew]" >> /etc/pacman.conf \
@@ -14,11 +17,22 @@ RUN wget https://github.com/gradylink/pacbrew-packages/releases/download/sdl2_im
   && rm ps4-openorbis-sdl2_image-2.6.3-1-any.pkg.tar.zst ps4-openorbis-libcurl-8.4.0-1-any.pkg.tar.gz ps4-openorbis-sdl2_gfx-1.0.4-1-any.pkg.tar.gz
 
 # Official OpenOrbis (PacBrew one has some issues)
-RUN wget https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/releases/download/v0.5.3/toolchain-llvm-18.2.zip && unzip toolchain-llvm-18.2.zip && tar xf toolchain-llvm-18.tar.gz && mv OpenOrbis/PS4Toolchain /opt/openorbis && rm -r OpenOrbis toolchain-llvm-18.tar.gz toolchain-llvm-18.2.zip
+RUN wget https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/releases/download/v0.5.2/v0.5.2.tar.gz && tar xf v0.5.2.tar.gz && mv OpenOrbis/PS4Toolchain /opt/openorbis && rm v0.5.2.tar.gz
 
 # Remove OpenOrbis Portlibs to prevent PacBrew Conflicts
 RUN rm /opt/openorbis/lib/libSDL2.a /opt/openorbis/lib/libSDL2main.a /opt/openorbis/lib/libSDL2_image.a
 
+# Newer create-gp4
+RUN git clone https://github.com/OpenOrbis/create-gp4.git && cd create-gp4/cmd/create-gp4 && go build -o /opt/openorbis/bin/linux/create-gp4 && cd / && rm -r create-gp4
+
 # Environment Variables
 ENV PACBREW=/opt/pacbrew
 ENV OO_PS4_TOOLCHAIN=/opt/openorbis
+ENV OPENORBIS=/opt/openorbis
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+# Patch PacBrew pkg-config to use PacBrew portlibs instead of normal OpenOrbis
+RUN sed -i 's|PKG_CONFIG_LIBDIR=${OPENORBIS}/usr/lib/pkgconfig|PKG_CONFIG_LIBDIR=${PACBREW}/ps4/openorbis/usr/lib/pkgconfig|' /opt/pacbrew/ps4/openorbis/usr/bin/openorbis-pkg-config
+
+# Missing vorbisfile requirement for sdl2_mixer's pkg-config
+RUN sed -i '/^Requires.private:/ s/$/ vorbisfile/' /opt/pacbrew/ps4/openorbis/usr/lib/pkgconfig/SDL2_mixer.pc
